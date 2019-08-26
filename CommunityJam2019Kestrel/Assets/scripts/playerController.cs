@@ -189,7 +189,7 @@ public class playerController : MonoBehaviour
         torch.SetActive(false);
         yield return new WaitForSeconds(0.3f);
         transform.position = spawn2.position;
-        yield return new WaitForSeconds(0.3f);
+        yield return new WaitForSeconds(0.7f);
         torch.SetActive(true);
         freeze = false;
         yield return new WaitForSeconds(0.2f);
