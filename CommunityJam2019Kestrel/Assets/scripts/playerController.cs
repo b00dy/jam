@@ -23,9 +23,10 @@ public class playerController : MonoBehaviour
     private bool piecesGathethered;
 
     private int passcodeNumbersCollected;
+    private bool key1Collected;
 
-
-
+    public GameObject torch;
+    public Transform spawn2;
     [SerializeField] private string hori;
     [SerializeField] private string vert;
     [SerializeField] private float speed1;
@@ -47,6 +48,7 @@ public class playerController : MonoBehaviour
         piecesGathethered = false;
         char_ = GetComponent<CharacterController>();
         player = GetComponent<Transform>();
+        key1Collected = false;
     }
 
     // Update is called once per frame
@@ -92,6 +94,21 @@ public class playerController : MonoBehaviour
                 {
                     Destroy(hit.collider.gameObject);
                     passcodeNumbersCollected += 1;
+                }
+                if (hit.collider.gameObject.CompareTag("key1"))
+                {
+                    Debug.Log("key");
+                    Destroy(hit.collider.gameObject);
+                    key1Collected = true;
+                    interactionText.text = "The key is labelled 4...";
+                    Animator anim = interactionText.GetComponent<Animator>();
+                    anim.SetTrigger("fade");
+                }
+                if (hit.collider.gameObject.CompareTag("door4") && key1Collected == true)
+                {
+                    StartCoroutine(torchFlicker());
+                    Animator anim = hit.collider.gameObject.GetComponent<Animator>();
+                    anim.SetTrigger("open");
                 }
             }
         }
@@ -141,5 +158,26 @@ public class playerController : MonoBehaviour
         eul.x = v;
         eul.z = 0;
         transform.eulerAngles = eul;
+    }
+    IEnumerator torchFlicker()
+    {
+        yield return new WaitForSeconds(1);
+        torch.SetActive(false);
+        yield return new WaitForSeconds(0.3f);
+        torch.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+        torch.SetActive(false);
+        yield return new WaitForSeconds(0.3f);
+        torch.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+        torch.SetActive(false);
+        yield return new WaitForSeconds(0.3f);
+        transform.position = spawn2.position;
+        yield return new WaitForSeconds(0.3f);
+        torch.SetActive(true);
+        yield return new WaitForSeconds(0.2f);
+        torch.SetActive(false);
+        yield return new WaitForSeconds(0.3f);
+        torch.SetActive(true);
     }
 }

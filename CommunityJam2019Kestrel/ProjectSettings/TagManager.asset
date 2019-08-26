@@ -7,6 +7,8 @@ TagManager:
   - safe
   - drawer
   - passcodeNumber
+  - key1
+  - door4
   layers:
   - Default
   - TransparentFX
