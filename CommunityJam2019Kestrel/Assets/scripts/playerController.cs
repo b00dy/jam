@@ -24,6 +24,9 @@ public class playerController : MonoBehaviour
 
     private int passcodeNumbersCollected;
     private bool key1Collected;
+    private bool freeze;
+    //level 2 items
+    private bool tokenCollected;
 
     public GameObject torch;
     public Transform spawn2;
@@ -49,6 +52,7 @@ public class playerController : MonoBehaviour
         char_ = GetComponent<CharacterController>();
         player = GetComponent<Transform>();
         key1Collected = false;
+        freeze = false;
     }
 
     // Update is called once per frame
@@ -64,7 +68,11 @@ public class playerController : MonoBehaviour
         {
             piecesGathethered = true;
         }
-        move();
+        if(freeze == false)
+        {
+            move();
+        }
+
         //rot();
         transform.eulerAngles = new Vector3(-mouseY, mouseX, 0f);
         if (Input.GetMouseButtonDown(0))
@@ -109,6 +117,13 @@ public class playerController : MonoBehaviour
                     StartCoroutine(torchFlicker());
                     Animator anim = hit.collider.gameObject.GetComponent<Animator>();
                     anim.SetTrigger("open");
+                }
+                if (hit.collider.gameObject.CompareTag("raincoat"))
+                {
+                    Destroy(hit.collider.gameObject);
+                    interactionText.text = "There is a token in the pocket...";
+                    Animator anim = interactionText.GetComponent<Animator>();
+                    anim.SetTrigger("fade");
                 }
             }
         }
@@ -167,6 +182,7 @@ public class playerController : MonoBehaviour
         torch.SetActive(true);
         yield return new WaitForSeconds(0.2f);
         torch.SetActive(false);
+        freeze = true;
         yield return new WaitForSeconds(0.3f);
         torch.SetActive(true);
         yield return new WaitForSeconds(0.2f);
@@ -175,8 +191,10 @@ public class playerController : MonoBehaviour
         transform.position = spawn2.position;
         yield return new WaitForSeconds(0.3f);
         torch.SetActive(true);
+        freeze = false;
         yield return new WaitForSeconds(0.2f);
         torch.SetActive(false);
+        freeze = false;
         yield return new WaitForSeconds(0.3f);
         torch.SetActive(true);
     }

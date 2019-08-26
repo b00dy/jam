@@ -9,6 +9,8 @@ TagManager:
   - passcodeNumber
   - key1
   - door4
+  - safe2
+  - raincoat
   layers:
   - Default
   - TransparentFX
