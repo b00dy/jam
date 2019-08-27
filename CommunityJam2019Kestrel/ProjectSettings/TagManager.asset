@@ -11,6 +11,15 @@ TagManager:
   - door4
   - safe2
   - raincoat
+  - 1vending
+  - 2vending
+  - 3vending
+  - 4vending
+  - 5vending
+  - 6vending
+  - 7vending
+  - 8vending
+  - 9vending
   layers:
   - Default
   - TransparentFX

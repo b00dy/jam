@@ -22,11 +22,16 @@ public class playerController : MonoBehaviour
     public Text interactionText;
     private bool piecesGathethered;
 
+    private CapsuleCollider col;
     private int passcodeNumbersCollected;
     private bool key1Collected;
     private bool freeze;
     //level 2 items
     private bool tokenCollected;
+    private int index;
+    public GameObject screwdriver;
+    public Transform dispensePoint;
+    private bool dispensed;
 
     public GameObject torch;
     public Transform spawn2;
@@ -46,6 +51,7 @@ public class playerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        col = GetComponent<CapsuleCollider>();
         lookC(); clampX = 0.0f;
         rb = GetComponent<Rigidbody>();
         piecesGathethered = false;
@@ -53,6 +59,8 @@ public class playerController : MonoBehaviour
         player = GetComponent<Transform>();
         key1Collected = false;
         freeze = false;
+        index = 0;
+        dispensed = false;
     }
 
     // Update is called once per frame
@@ -72,12 +80,19 @@ public class playerController : MonoBehaviour
         {
             move();
         }
+        if(index == 4 && tokenCollected == true && dispensed == false)
+        {
+            Debug.Log("disperse");
+            Instantiate(screwdriver, dispensePoint.position, Quaternion.identity);
+            dispensed = true;
+        }
 
         //rot();
         transform.eulerAngles = new Vector3(-mouseY, mouseX, 0f);
         if (Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Interaction process initiated");
+           
+           // Debug.Log("Interaction process initiated");
             RaycastHit hit;
             if (Physics.Raycast(cameraValues.position, cameraValues.forward, out hit, interactRayDistance, interactionLayers))
             {
@@ -121,10 +136,50 @@ public class playerController : MonoBehaviour
                 if (hit.collider.gameObject.CompareTag("raincoat"))
                 {
                     Destroy(hit.collider.gameObject);
+                    tokenCollected = true;
                     interactionText.text = "There is a token in the pocket...";
                     Animator anim = interactionText.GetComponent<Animator>();
                     anim.SetTrigger("fade");
                 }
+                if (hit.collider.gameObject.CompareTag("3vending") && index != 0)
+                {
+                    index = 0;
+                }
+                if (hit.collider.gameObject.CompareTag("3vending") && index == 0)
+                {
+                    index = 1;
+                }
+                if (hit.collider.gameObject.CompareTag("4vending") && index != 1)
+                {
+                    index = 0;
+                }
+
+                if (hit.collider.gameObject.CompareTag("4vending") && index == 1)
+                {
+                    index += 1;
+                }
+                if (hit.collider.gameObject.CompareTag("7vending") && index != 2)
+                {
+                    index = 0;
+                }
+                if (hit.collider.gameObject.CompareTag("7vending") && index == 2)
+                {
+                    index += 1;
+                }
+                if (hit.collider.gameObject.CompareTag("1vending") && index != 3)
+                {
+                    index = 0;
+                }
+                if (hit.collider.gameObject.CompareTag("1vending") && index == 3)
+                {
+                    index += 1;
+                }
+                
+                if (hit.collider.gameObject.CompareTag("2vending") || hit.collider.gameObject.CompareTag("5vending") || hit.collider.gameObject.CompareTag("6vending") || hit.collider.gameObject.CompareTag("8vending") || hit.collider.gameObject.CompareTag("9vending"))
+                {
+                    index = 0;
+                }
+                Debug.Log(index);
             }
         }
     }
@@ -188,7 +243,10 @@ public class playerController : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         torch.SetActive(false);
         yield return new WaitForSeconds(0.3f);
+        col.enabled = false;
         transform.position = spawn2.position;
+        yield return new WaitForSeconds(0.1f);
+        col.enabled = true;
         yield return new WaitForSeconds(0.7f);
         torch.SetActive(true);
         freeze = false;
